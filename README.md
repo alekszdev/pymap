@@ -14,4 +14,4 @@
 git clone https://github.com/alekszdev/pymap
 cd PyNetTools
 pip3 install -r requirements.txt
-python3 pynettolls.py
+python3 pymap.py
