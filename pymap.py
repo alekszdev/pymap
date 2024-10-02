@@ -4,7 +4,7 @@ from colorama import Fore, Style, init
 import fade
 
 def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("clear || cls")
 clear_screen()
 
 
@@ -119,6 +119,26 @@ def sv_scann():
         print(f"{Fore.RED}[{Fore.RESET}+{Fore.RED}]{Fore.RESET} An error has ocurred: {e}")
 
 
+
+def try_again():
+    try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
+    if try_another=='y':
+        main_menu()
+
+
+
+def select_option(option):
+    actions = {
+        1: port_scan,
+        2: agresive_scan,
+        3: os_detect,
+        4: sv_scann
+        }
+    if option in actions:
+        actions[option]()
+
+
+
 def main_menu():
     clear_screen()
     print(fade.purpleblue(f"""
@@ -141,28 +161,9 @@ by alekszdev.
     print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}4{Fore.LIGHTBLUE_EX}]{Fore.RESET} SERVICE AND SOFTWARE SCAN")
     try:
         option = int(input("> "))
-        if option==1:
-            port_scan()
-            try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
-            if try_another=='y':
-                main_menu()
-        elif option==2:
-            agresive_scan()
-            try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
-            if try_another=='y':
-                main_menu()
-        elif option==3:
-            os_detect()
-            try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
-            if try_another=='y':
-                main_menu()
-        elif option==4:
-            sv_scann()
-            try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
-            if try_another=='y':
-                main_menu()
+        select_option(option)
+        try_again()
     except ValueError as e:
         print(f"{Fore.RED}[{Fore.RESET}+{Fore.RED}]{Fore.RESET} An error has ocurred: {e}")
-        try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
-        main_menu()
+        try_again()
 main_menu()
