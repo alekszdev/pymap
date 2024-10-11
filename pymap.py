@@ -13,14 +13,13 @@ def port_scan():
     try:
         ip_to_scan = input("Enter an IP to scan: ")
         range_to_scan = input("Enter a range (1-20): ")
+        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         scanner = nmap.PortScanner()
         scanner.scan(ip_to_scan, range_to_scan)
 
         state_host = scanner[f'{ip_to_scan}'].state()
         tcp_ports = scanner[f'{ip_to_scan}']['tcp'].keys()
-
-        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         for host in scanner.all_hosts():
             print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} HOST: {host}")
@@ -43,11 +42,10 @@ def agresive_scan():
         ip_to_scan = input("Enter an IP to scan: ")
         range_to_scan = input("Enter a range (1-20): ")
         velocity_level = input("Enter a velocity and agresive to scan (1-5): ")
+        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         scanner = nmap.PortScanner()
         scanner.scan(ip_to_scan, range_to_scan, f'-T{velocity_level} ')
-
-        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         state_host = scanner[f'{ip_to_scan}'].state()
         tcp_ports = scanner[f'{ip_to_scan}']['tcp'].keys()
@@ -71,11 +69,11 @@ def agresive_scan():
 def os_detect():
     try:
         ip_to_scan = input("Enter an IP to scan: ")
+        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         scanner = nmap.PortScanner()
         scanner.scan(ip_to_scan, arguments='-O')
-        
-        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
+
 
         if 'osclass' in scanner[ip_to_scan]:
             for osclass in scanner[ip_to_scan]['osclass']:
@@ -95,14 +93,13 @@ def sv_scann():
     try:
         ip_to_scan = input("Enter an IP to scan: ")
         range_to_scan = input("Enter a range (1-20): ")
+        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         scanner = nmap.PortScanner()
         scanner.scan(ip_to_scan, range_to_scan, arguments='-sV')
 
         state_host = scanner[f'{ip_to_scan}'].state()
         tcp_ports = scanner[f'{ip_to_scan}']['tcp'].keys()
-
-        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
 
         for host in scanner.all_hosts():
             print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} HOST: {host}")
@@ -112,7 +109,36 @@ def sv_scann():
                     extrainfo = scanner[host][ip_host][port].get('extrainfo', 'N/A')
                     port_state = scanner[host][ip_host][port]['state']
 
-                    print(f"PORT: {port} IS {port_state}")
+                    print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} PORT: {port} IS {port_state}")
+                    if extrainfo:
+                        print(f"{Fore.LIGHTMAGENTA_EX}[{Fore.RESET}+{Fore.LIGHTMAGENTA_EX}]{Fore.RESET} EXTRA INFO: {extrainfo}")
+    except KeyError as e:
+        print(f"{Fore.RED}[{Fore.RESET}+{Fore.RED}]{Fore.RESET} An error has ocurred: {e}")
+
+
+
+def udp_scan():
+    try: 
+        ip_to_scan = input("Enter an IP to scan: ")
+        range_to_scan = input("Enter a range (1-20): ")
+
+        scanner = nmap.PortScanner()
+        print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} Scanning...")
+        scanner.scan(ip_to_scan, range_to_scan, arguments='-sU')
+        state_host = scanner[f'{ip_to_scan}'].state()
+        udp_ports = scanner[f'{ip_to_scan}']['udp'].keys()
+
+
+        for host in scanner.all_hosts():
+            print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} HOST: {host}")
+            
+            for ip_host in scanner[host].all_protocols():
+                print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} HOST STATE: {state_host} ")
+
+                for port in udp_ports:
+                    extrainfo = scanner[host][ip_host][port].get('extrainfo', 'N/A')
+                    port_state = scanner[host][ip_host][port]['state']
+                    print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}+{Fore.LIGHTBLUE_EX}]{Fore.RESET} PORT: {port} IS {port_state}")
                     if extrainfo:
                         print(f"{Fore.LIGHTMAGENTA_EX}[{Fore.RESET}+{Fore.LIGHTMAGENTA_EX}]{Fore.RESET} EXTRA INFO: {extrainfo}")
     except KeyError as e:
@@ -121,7 +147,7 @@ def sv_scann():
 
 
 def try_again():
-    try_another = input(f"{Fore.CYAN}[{Fore.RESET}+{Fore.CYAN}]{Fore.RESET} You want to try another time (y/n): ")
+    try_another = input(f"You want to try another time (y/n): ")
     if try_another=='y':
         main_menu()
 
@@ -132,7 +158,8 @@ def select_option(option):
         1: port_scan,
         2: agresive_scan,
         3: os_detect,
-        4: sv_scann
+        4: sv_scann,
+        5: udp_scan
         }
     if option in actions:
         actions[option]()
@@ -159,6 +186,7 @@ by alekszdev.
     print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}2{Fore.LIGHTBLUE_EX}]{Fore.RESET} AGRESSIVE SCAN")
     print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}3{Fore.LIGHTBLUE_EX}]{Fore.RESET} OS DETECT SCAN")
     print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}4{Fore.LIGHTBLUE_EX}]{Fore.RESET} SERVICE AND SOFTWARE SCAN")
+    print(f"{Fore.LIGHTBLUE_EX}[{Fore.RESET}5{Fore.LIGHTBLUE_EX}]{Fore.RESET} UDP SCAN (User Datagram Protocol)")
     try:
         option = int(input("> "))
         select_option(option)
